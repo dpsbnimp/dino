@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Dino Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+
+        canvas {
+            border: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="200"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const dino = {
+            x: 50,
+            y: 150,
+            width: 50,
+            height: 50,
+            color: '#0095DD',
+            jumping: false,
+            jumpHeight: 100,
+            jumpVelocity: 5,
+            gravity: 0.5,
+            velocity: 0
+        };
+
+        const ground = {
+            y: 180,
+            height: 20,
+            color: '#333'
+        };
+
+        function drawDino() {
+            ctx.beginPath();
+            ctx.rect(dino.x, dino.y, dino.width, dino.height);
+            ctx.fillStyle = dino.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawGround() {
+            ctx.beginPath();
+            ctx.rect(0, ground.y, canvas.width, ground.height);
+            ctx.fillStyle = ground.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function jump() {
+            if (!dino.jumping) {
+                dino.jumping = true;
+                dino.velocity = -dino.jumpVelocity;
+            }
+        }
+
+        function update() {
+            // Update dino position
+            dino.y += dino.velocity;
+            dino.velocity += dino.gravity;
+
+            // Check if dino is on the ground
+            if (dino.y > ground.y - dino.height) {
+                dino.y = ground.y - dino.height;
+                dino.jumping = false;
+            }
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw dino and ground
+            drawDino();
+            drawGround();
+        }
+
+        function gameLoop() {
+            update();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Listen for spacebar to jump
+        window.addEventListener('keydown', function (e) {
+            if (e.code === 'Space') {
+                jump();
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>
